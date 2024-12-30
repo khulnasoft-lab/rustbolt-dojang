@@ -79,7 +79,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = rspack_dojang::Dojang::new();
+    /// let mut dojang = rustbolt_dojang::Dojang::new();
     ///
     /// // Constructs the template "tmpl" with the content "<%= 1 + 1 %>".
     /// dojang.add("tmpl".to_string(), "<%= 1 + 1 %>".to_string());
@@ -135,7 +135,7 @@ impl Dojang {
     ///
     /// ```
     /// use serde_json::Value;
-    /// use rspack_dojang::dojang::Dojang;
+    /// use rustbolt_dojang::dojang::Dojang;
     ///
     /// fn func(a: i64) -> i64 { a + 1 }
     /// fn func2(mut a: String, b: String) -> String {
@@ -240,7 +240,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = rspack_dojang::Dojang::new();
+    /// let mut dojang = rustbolt_dojang::Dojang::new();
     ///
     /// // Add every files under ./tests as a template.
     /// dojang.load("./tests");
@@ -295,7 +295,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = rspack_dojang::Dojang::new();
+    /// let mut dojang = rustbolt_dojang::Dojang::new();
     ///
     /// // Render 'template_file' with the provided context.
     /// dojang.load("./tests").unwrap().render("template_file", serde_json::from_str(r#"{ "test" : { "title" : "Welcome to Dojang"} }"#).unwrap());
@@ -386,10 +386,10 @@ fn escape_unescape() {
         dojang
             .render(
                 "some_template",
-                serde_json::from_str(r#"{ "myHtml": "<span>Rspack</span>" }"#).unwrap()
+                serde_json::from_str(r#"{ "myHtml": "<span>Rustbolt</span>" }"#).unwrap()
             )
             .unwrap(),
-        "&lt;span&gt;Rspack&lt;&#x2F;span&gt;<span>Rspack</span>"
+        "&lt;span&gt;Rustbolt&lt;&#x2F;span&gt;<span>Rustbolt</span>"
     );
 }
 #[test]
@@ -407,10 +407,10 @@ fn custom_escape_unescape() {
         dojang
             .render(
                 "some_template",
-                serde_json::from_str(r#"{ "myHtml": "<span>Rspack</span>" }"#).unwrap()
+                serde_json::from_str(r#"{ "myHtml": "<span>Rustbolt</span>" }"#).unwrap()
             )
             .unwrap(),
-        "<span>Rspack</span>&lt;span&gt;Rspack&lt;&#x2F;span&gt;"
+        "<span>Rustbolt</span>&lt;span&gt;Rustbolt&lt;&#x2F;span&gt;"
     );
 }
 #[test]

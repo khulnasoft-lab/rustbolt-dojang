@@ -1,5 +1,5 @@
 [package]
-name = "rspack_dojang"
+name = "rustbolt_dojang"
 version = "0.1.9"
 authors = ["KhulnaSoft, Lab"]
 edition = "2021"

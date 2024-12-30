@@ -1,7 +1,7 @@
-# rspack_dojang
+# rustbolt_dojang
 
 > [!NOTE]  
-> This is a fork of [dojang](https://github.com/khulnasoft-lab/rustbolt-dojang), and will be used in Rspack to fix bugs and add some Rspack customized features.
+> This is a fork of [dojang](https://github.com/khulnasoft-lab/rustbolt-dojang), and will be used in Rustbolt to fix bugs and add some Rustbolt customized features.
 
 ![Test and Coverage](https://github.com/khulnasoft-lab/rustbolt-dojang/actions/workflows/test.yaml/badge.svg)
 
@@ -18,7 +18,7 @@
 ## How to use?
 
 ```rust
-use rspack_dojang::Dojang;
+use rustbolt_dojang::Dojang;
 use serde_json::Value;
 
 // Create a template engine Dojang.
