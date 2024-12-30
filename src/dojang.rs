@@ -9,36 +9,37 @@ use std::io;
 use std::path::PathBuf;
 use std::sync::Mutex;
 
-#[derive(Debug, Clone)]
+#[derive(Debug,Clone)]
 pub struct DojangOptions {
     pub escape: String,
-    pub unescape: String,
+    pub unescape: String
 }
 impl Default for DojangOptions {
     fn default() -> Self {
         Self {
             escape: "=".to_string(),
-            unescape: "-".to_string(),
+            unescape: "-".to_string()
         }
     }
 }
 /// HTML template rendering engine that should be constructed for once.
 pub struct Dojang {
     /// Mapping between the template file name and the renderer along with the file content.
-    templates: HashMap<String, (Executer, String)>,
+    pub templates: HashMap<String, (Executer, String)>,
 
     /// Map of the registered functions.
-    functions: HashMap<String, FunctionContainer>,
+    pub functions: HashMap<String, FunctionContainer>,
 
     /// Files read from "include". Those are cached here.
-    includes: Mutex<HashMap<String, String>>,
+    pub includes: Mutex<HashMap<String, String>>,
 
     // part of ejs config options, see https://github.com/mde/ejs#options
-    options: DojangOptions,
+    pub options: DojangOptions
+
 }
 
 impl Dojang {
-    pub fn with_options(&mut self, options: DojangOptions) {
+    pub fn with_options(&mut self,options:DojangOptions){
         self.options = options;
     }
     /// Creates a template engine.
@@ -63,7 +64,7 @@ impl Dojang {
             templates: HashMap::new(),
             functions,
             includes: Mutex::new(HashMap::new()),
-            options: Default::default(),
+            options: Default::default()
         }
     }
 
@@ -79,13 +80,13 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = rustbolt_dojang::Dojang::new();
+    /// let mut dojang = rspack_dojang::Dojang::new();
     ///
     /// // Constructs the template "tmpl" with the content "<%= 1 + 1 %>".
     /// dojang.add("tmpl".to_string(), "<%= 1 + 1 %>".to_string());
     /// ```
     pub fn add(&mut self, file_name: String, template: String) -> Result<&Self, String> {
-        if self.templates.contains_key(&file_name) {
+       if self.templates.contains_key(&file_name) {
             return Err(format!("{} is already added as a template", file_name));
         }
 
@@ -96,25 +97,19 @@ impl Dojang {
 
         Ok(self)
     }
-    pub fn add_with_option(
-        &mut self,
-        file_name: String,
-        template: String,
-    ) -> Result<&Self, String> {
+    pub fn add_with_option(&mut self, file_name: String, template: String) -> Result<&Self, String> {
         if self.templates.contains_key(&file_name) {
             return Err(format!("{} is already added as a template", file_name));
         }
 
         self.templates.insert(
             file_name,
-            (
-                Executer::new(Parser::parse_with_options(&template, self.options.clone())?)?,
-                template,
-            ),
+            (Executer::new(Parser::parse_with_options(&template, self.options.clone())?)?, template),
         );
 
         Ok(self)
     }
+
 
     /// Adds a function that can be used in the template.
     ///
@@ -135,7 +130,7 @@ impl Dojang {
     ///
     /// ```
     /// use serde_json::Value;
-    /// use rustbolt_dojang::dojang::Dojang;
+    /// use rspack_dojang::dojang::Dojang;
     ///
     /// fn func(a: i64) -> i64 { a + 1 }
     /// fn func2(mut a: String, b: String) -> String {
@@ -147,6 +142,23 @@ impl Dojang {
     /// dj.add_function_1("func".to_string(), func);
     /// dj.add_function_2("func2".to_string(), func2);
     /// ```
+
+    pub fn add_function_0<V: 'static>(
+        &mut self,
+        function_name: String,
+        function: fn() -> V,
+    ) -> Result<&Self, String>
+    where
+        V: Into<Operand>,
+    {
+        if self.functions.contains_key(&function_name) {
+            return Err(format!("{} is already added as a function", function_name));
+        }
+
+        self.functions
+            .insert(function_name, to_function_container0(function));
+        Ok(self)
+    }
 
     pub fn add_function_1<T: 'static, V: 'static>(
         &mut self,
@@ -240,7 +252,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = rustbolt_dojang::Dojang::new();
+    /// let mut dojang = rspack_dojang::Dojang::new();
     ///
     /// // Add every files under ./tests as a template.
     /// dojang.load("./tests");
@@ -295,7 +307,7 @@ impl Dojang {
     /// # Examples
     ///
     /// ```
-    /// let mut dojang = rustbolt_dojang::Dojang::new();
+    /// let mut dojang = rspack_dojang::Dojang::new();
     ///
     /// // Render 'template_file' with the provided context.
     /// dojang.load("./tests").unwrap().render("template_file", serde_json::from_str(r#"{ "test" : { "title" : "Welcome to Dojang"} }"#).unwrap());
@@ -320,6 +332,14 @@ fn get_all_file_path_under_dir(dir_name: &str) -> io::Result<Vec<PathBuf>> {
         .into_iter()
         .map(|x| x.map(|entry| entry.path()))
         .collect()
+}
+
+pub fn to_function_container0<V: 'static + Into<Operand>>(
+    func: fn() -> V,
+) -> FunctionContainer {
+    FunctionContainer::F0(Box::new(move || -> Operand {
+        func().into()
+    }))
 }
 
 pub fn to_function_container1<T: 'static + From<Operand>, V: 'static + Into<Operand>>(
@@ -386,10 +406,10 @@ fn escape_unescape() {
         dojang
             .render(
                 "some_template",
-                serde_json::from_str(r#"{ "myHtml": "<span>Rustbolt</span>" }"#).unwrap()
+                serde_json::from_str(r#"{ "myHtml": "<span>Rspack</span>" }"#).unwrap()
             )
             .unwrap(),
-        "&lt;span&gt;Rustbolt&lt;&#x2F;span&gt;<span>Rustbolt</span>"
+        "&lt;span&gt;Rspack&lt;&#x2F;span&gt;<span>Rspack</span>"
     );
 }
 #[test]
@@ -398,19 +418,17 @@ fn custom_escape_unescape() {
     let mut dojang = Dojang::new();
     dojang.with_options(DojangOptions {
         escape: "-".to_string(),
-        unescape: "=".to_string(),
+        unescape: "=".to_string()
     });
-    assert!(dojang
-        .add_with_option("some_template".to_string(), template)
-        .is_ok());
+    assert!(dojang.add_with_option("some_template".to_string(), template).is_ok());
     assert_eq!(
         dojang
             .render(
                 "some_template",
-                serde_json::from_str(r#"{ "myHtml": "<span>Rustbolt</span>" }"#).unwrap()
+                serde_json::from_str(r#"{ "myHtml": "<span>Rspack</span>" }"#).unwrap()
             )
             .unwrap(),
-        "<span>Rustbolt</span>&lt;span&gt;Rustbolt&lt;&#x2F;span&gt;"
+        "<span>Rspack</span>&lt;span&gt;Rspack&lt;&#x2F;span&gt;"
     );
 }
 #[test]
