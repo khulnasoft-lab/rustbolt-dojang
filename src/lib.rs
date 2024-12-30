@@ -1,4 +1,4 @@
-// Author Jaebum Lee (https://modoocode.com)
+// Author Md Sulaiman (https://modoocode.com)
 //
 // Licensed under MIT license.
 //

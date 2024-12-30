@@ -5,7 +5,7 @@
 
 ![Test and Coverage](https://github.com/khulnasoft-lab/rustbolt-dojang/actions/workflows/test.yaml/badge.svg)
 
-[crates.io]: https://crates.io/crates/rustbolt-dojang
+[crates.io]: https://crates.io/crates/rustbolt_dojang
 
 **Dojang** is a Html template engine, as a drop in replacement for [EJS](https://ejs.co/). Though it does not supports 100% of the javascript syntax, it supports enough to cover the basic usages.
 
