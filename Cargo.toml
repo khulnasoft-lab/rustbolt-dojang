@@ -1,0 +1,14 @@
+[package]
+name = "rspack_dojang"
+version = "0.1.9"
+authors = ["KhulnaSoft, Lab"]
+edition = "2021"
+description = "Dojang, a EJS like Html Template Engine."
+license = "MIT"
+keywords = ["html-template", "html", "template"]
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde_json = "1.0.59"
+html-escape = "0.2.9"
